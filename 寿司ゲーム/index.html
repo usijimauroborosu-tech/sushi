@@ -34,13 +34,14 @@
         #orderDisplay {
             position: absolute;
             left: 10px;
-            bottom: 20px;
+            bottom: min(120px, 15vh); /* より上に表示し、モバイル対応 */
             background: #000080;
             padding: 15px;
             border-radius: 15px;
             border: 3px solid #000080;
             box-shadow: 0 4px 8px rgba(0,0,0,0.3);
             min-width: 120px;
+            max-width: min(150px, 40vw); /* 最大幅を制限 */
         }
         
         #orderDisplay h3 {
@@ -57,13 +58,14 @@
         #gameInfo {
             position: absolute;
             right: 10px;
-            bottom: 20px;
+            bottom: min(120px, 15vh); /* より上に表示し、モバイル対応 */
             background: #000080;
             padding: 15px;
             border-radius: 15px;
             border: 3px solid #000080;
             box-shadow: 0 4px 8px rgba(0,0,0,0.3);
             min-width: 150px;
+            max-width: min(180px, 45vw); /* 最大幅を制限 */
         }
         
         #gameInfo div {
@@ -193,8 +195,7 @@
         button:hover {
             color: #000080;
             background-color: #FFEF6C;
-       
- }
+        }
         
         #startScreen {
             position: absolute;
@@ -241,7 +242,18 @@
             }
                         
             #orderDisplay, #gameInfo {
-                padding: 10px;
+                padding: 12px;
+                bottom: min(100px, 12vh); /* モバイルでさらに上に */
+            }
+            
+            #orderDisplay {
+                left: 5px;
+                max-width: 35vw; /* モバイルでより小さく */
+            }
+            
+            #gameInfo {
+                right: 5px;
+                max-width: 40vw; /* モバイルでより小さく */
             }
             
             #conveyor {
@@ -252,6 +264,27 @@
                 width: 50px;
                 height: 50px;
                 font-size: 40px;
+            }
+        }
+        
+        /* 極小画面（縦長スマートフォン）用の追加調整 */
+        @media (max-width: 480px) and (max-height: 700px) {
+            #orderDisplay, #gameInfo {
+                bottom: min(80px, 10vh); /* さらに上に配置 */
+                padding: 10px;
+            }
+            
+            #orderDisplay h3, #gameInfo div {
+                font-size: min(12px, 3vw);
+                margin: 4px 0;
+            }
+        }
+        
+        /* 横長画面用の調整 */
+        @media (orientation: landscape) and (max-height: 500px) {
+            #orderDisplay, #gameInfo {
+                bottom: min(60px, 8vh);
+                padding: 10px;
             }
         }
         
