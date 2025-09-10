@@ -34,7 +34,7 @@
         #orderDisplay {
             position: absolute;
             left: 10px;
-            bottom: min(120px, 20vh); /* より上に表示し、モバイル対応 */
+            bottom: min(120px, 15vh); /* より上に表示し、モバイル対応 */
             background: #000080;
             padding: 15px;
             border-radius: 15px;
@@ -58,7 +58,7 @@
         #gameInfo {
             position: absolute;
             right: 10px;
-            bottom: min(120px, 20vh); /* より上に表示し、モバイル対応 */
+            bottom: min(120px, 15vh); /* より上に表示し、モバイル対応 */
             background: #000080;
             padding: 15px;
             border-radius: 15px;
@@ -69,10 +69,10 @@
         }
         
         #gameInfo div {
-            margin: 10px 0;
+            margin: 8px 0;
             font-weight: bold;
             color: #FFFFFF;
-            font-size: min(18px, 5vw);
+            font-size: min(14px, 3.5vw);
         }
         
         #conveyor {
@@ -283,7 +283,7 @@
         /* 横長画面用の調整 */
         @media (orientation: landscape) and (max-height: 500px) {
             #orderDisplay, #gameInfo {
-                bottom: min(60px, 8vh);
+                bottom: min(90px, 10vh);
                 padding: 10px;
             }
         }
@@ -589,6 +589,3 @@
     </script>
 </body>
 </html>
-
-
-
