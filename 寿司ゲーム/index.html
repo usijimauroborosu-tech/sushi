@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>回転寿司タッチゲーム</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
+            user-select: none;
+        }
+        
+        #gameContainer {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            background-image: url('background.jpg');
+            background-size: cover;
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            /* フォールバック用の背景色 */
+            background-color: #D2B48C;
+        }
+        
+        
+        #orderDisplay {
+            position: absolute;
+            left: 10px;
+            bottom: 20px;
+            background: #000080;
+            padding: 15px;
+            border-radius: 15px;
+            border: 3px solid #000080;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            min-width: 120px;
+        }
+        
+        #orderDisplay h3 {
+            color: #FFFFFF;
+            margin-bottom: 8px;
+            font-size: min(16px, 4vw);
+        }
+        
+        #currentOrder {
+            font-size: min(40px, 8vw);
+            text-align: center;
+        }
+        
+        #gameInfo {
+            position: absolute;
+            right: 10px;
+            bottom: 20px;
+            background: #000080;
+            padding: 15px;
+            border-radius: 15px;
+            border: 3px solid #000080;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            min-width: 150px;
+        }
+        
+        #gameInfo div {
+            margin: 8px 0;
+            font-weight: bold;
+            color: #FFFFFF;
+            font-size: min(14px, 3.5vw);
+        }
+        
+        #conveyor {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: min(120px, 20vh);
+            transform: translateY(-50%);
+            background: #000000;
+            border-top: 5px solid #000080;
+            border-bottom: 5px solid #000080;
+            overflow: hidden;
+        }
+        
+        .sushi {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.1s ease;
+            background: white;
+            border-radius: 50%;
+            border: 3px solid #000080;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            top: 50%;
+            transform: translateY(-50%);
+            touch-action: manipulation;
+            overflow: hidden;
+        }
+        
+        .sushi img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+        
+        .sushi:hover {
+            transform: translateY(-50%) scale(1.1);
+        }
+        
+        .sushi:active {
+            transform: translateY(-50%) scale(0.95);
+        }
+        
+        .correct-flash {
+            animation: correctFlash 0.3s ease;
+        }
+        
+        .wrong-flash {
+            animation: wrongFlash 0.3s ease;
+        }
+        
+        @keyframes correctFlash {
+            0%, 100% { background: white; }
+            50% { background: #90EE90; }
+        }
+        
+        @keyframes wrongFlash {
+            0%, 100% { background: white; }
+            50% { background: #FFB6C1; }
+        }
+        
+        #gameOverScreen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        #gameOverContent {
+            background: #000080;
+            padding: min(40px, 6vw);
+            border-radius: 20px;
+            text-align: center;
+            border: 5px solid #000080;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.5);
+            margin: 20px;
+            color: #FFFFFF;
+        }
+        
+        #gameOverContent h2 {
+            color: #FFFFFF;
+            margin-bottom: 20px;
+            font-size: min(28px, 6vw);
+        }
+        
+        #gameOverContent div {
+            color: #FFFFFF;
+            margin: 10px 0;
+        }
+        
+        #rank {
+            font-size: min(20px, 4.5vw);
+            margin: 20px 0;
+            font-weight: bold;
+        }
+        
+        button {
+            background: #FFFFFF;
+            color: #000080;
+            border: none;
+            padding: min(15px, 3vw) min(30px, 6vw);
+            font-size: min(16px, 4vw);
+            border-radius: 10px;
+            cursor: pointer;
+            margin: 10px;
+            transition: background 0.3s ease;
+        }
+        
+        button:hover {
+            color: #000080;
+            background-color: #FFEF6C;
+       
+ }
+        
+        #startScreen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        #startContent {
+            background: #000080;
+            padding: min(40px, 6vw);
+            border-radius: 20px;
+            text-align: center;
+            border: 5px solid #000080;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.5);
+            margin: 20px;
+            max-width: 90vw;
+            color: #FFFFFF;
+        }
+        
+        #startContent h1 {
+            color: #FFFFFF;
+            margin-bottom: 20px;
+            font-size: min(32px, 7vw);
+        }
+        
+        #startContent p {
+            color: #FFFFFF;
+            margin-bottom: 15px;
+            line-height: 1.5;
+            font-size: min(14px, 3.5vw);
+        }
+        
+        /* モバイル専用の調整 */
+        @media (max-width: 768px) {
+            #customer {
+                width: 80px;
+                height: 80px;
+            }
+                        
+            #orderDisplay, #gameInfo {
+                padding: 10px;
+            }
+            
+            #conveyor {
+                height: 100px;
+            }
+            
+            .sushi {
+                width: 50px;
+                height: 50px;
+                font-size: 40px;
+            }
+        }
+        
+        /* タッチデバイス用の追加スタイル */
+        @media (hover: none) and (pointer: coarse) {
+            .sushi:active {
+                transform: translateY(-50%) scale(0.9);
+                background-color: #f0f0f0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="gameContainer">
+        <div id="customer"></div>
+        
+        <div id="orderDisplay">
+            <h3>ご注文</h3>
+            <div id="currentOrder"></div>
+        </div>
+        
+        <div id="gameInfo">
+            <div>時間: <span id="timer">60</span>秒</div>
+            <div>スコア: <span id="score">0</span></div>
+            <div>ミス: <span id="mistakes">0</span>/3</div>
+        </div>
+        
+        <div id="conveyor"></div>
+        
+        <div id="startScreen">
+            <div id="startContent">
+                <h1>🍣 回転寿司ゲーム 🍣</h1>
+                <p>お客さんの注文に合った寿司をタッチしましょう！</p>
+                <p>・制限時間：60秒</p>
+                <p>・3回間違えるとゲーム終了</p>
+                <p>・正解数でランクが決まります</p>
+                <button onclick="startGame()">ゲームスタート</button>
+            </div>
+        </div>
+        
+        <div id="gameOverScreen">
+            <div id="gameOverContent">
+                <h2>ゲーム終了</h2>
+                <div>正解数: <span id="finalScore">0</span></div>
+                <div id="rank"></div>
+                <button onclick="restartGame()">もう一度</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const sushiTypes = [
+            { name: 'maguro', image: 'maguro.jpg' },
+            { name: 'ebi', image: 'ebi.jpg' },
+            { name: 'sake', image: 'sake.jpg' },
+            { name: 'iwashi', image: 'iwashi.jpg' },
+            { name: 'ikura', image: 'ikura.jpg' }
+        ];
+        let gameActive = false;
+        let currentOrder = '';
+        let score = 0;
+        let mistakes = 0;
+        let timeLeft = 60;
+        let gameTimer;
+        let sushiGenerationTimer; // 寿司生成用のタイマーを追加
+        let sushiSpeed = 2;
+        let sushiList = [];
+        
+        function getRandomSushi() {
+            return sushiTypes[Math.floor(Math.random() * sushiTypes.length)];
+        }
+        
+        function generateNewOrder() {
+            const randomSushi = getRandomSushi();
+            currentOrder = randomSushi.name;
+            // 注文表示用の画像を作成
+            const orderImg = document.createElement('img');
+            orderImg.src = randomSushi.image;
+            orderImg.style.width = '100%';
+            orderImg.style.height = 'auto';
+            orderImg.style.maxHeight = '60px';
+            orderImg.style.objectFit = 'contain';
+            
+            const orderDisplay = document.getElementById('currentOrder');
+            orderDisplay.innerHTML = '';
+            orderDisplay.appendChild(orderImg);
+        }
+        
+        function createSushi() {
+            if (!gameActive) return;
+            
+            const sushi = document.createElement('div');
+            sushi.className = 'sushi';
+            const sushiType = getRandomSushi();
+            
+            // 寿司画像を作成
+            const sushiImg = document.createElement('img');
+            sushiImg.src = sushiType.image;
+            sushiImg.alt = sushiType.name;
+            sushi.appendChild(sushiImg);
+            
+            sushi.style.right = '-80px';
+            sushi.dataset.type = sushiType.name;
+            sushi.dataset.clicked = 'false';
+            
+            const conveyor = document.getElementById('conveyor');
+            conveyor.appendChild(sushi);
+            
+            sushiList.push(sushi);
+            
+            // 寿司を移動
+            moveSushi(sushi);
+        }
+        
+        function moveSushi(sushi) {
+            let position = -80;
+            const moveInterval = setInterval(() => {
+                if (!gameActive) {
+                    clearInterval(moveInterval);
+                    return;
+                }
+                
+                position += sushiSpeed;
+                sushi.style.right = position + 'px';
+                
+                if (position > window.innerWidth + 100) {
+                    clearInterval(moveInterval);
+                    if (sushi && sushi.parentNode) {
+                        sushi.parentNode.removeChild(sushi);
+                        const index = sushiList.indexOf(sushi);
+                        if (index > -1) {
+                            sushiList.splice(index, 1);
+                        }
+                    }
+                }
+            }, 16);
+        }
+        
+        function handleConveyorClick(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            findAndClickSushi(e.clientX, e.clientY);
+        }
+        
+        function handleConveyorTouch(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const touch = e.touches[0];
+            findAndClickSushi(touch.clientX, touch.clientY);
+        }
+        
+        function findAndClickSushi(x, y) {
+            for (let sushi of sushiList) {
+                if (!sushi || sushi.dataset.clicked === 'true') continue;
+                
+                const rect = sushi.getBoundingClientRect();
+                if (x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom) {
+                    handleSushiClick(sushi);
+                    break;
+                }
+            }
+        }
+        
+        function handleSushiClick(sushi) {
+            if (!sushi || sushi.dataset.clicked === 'true') return;
+            
+            const sushiType = sushi.dataset.type;
+            
+            if (sushiType === currentOrder) {
+                // 正解
+                sushi.dataset.clicked = 'true';
+                sushi.classList.add('correct-flash');
+                score++;
+                document.getElementById('score').textContent = score;
+                generateNewOrder();
+                
+                // 寿司を削除
+                setTimeout(() => {
+                    if (sushi && sushi.parentNode) {
+                        sushi.parentNode.removeChild(sushi);
+                        const index = sushiList.indexOf(sushi);
+                        if (index > -1) {
+                            sushiList.splice(index, 1);
+                        }
+                    }
+                }, 300);
+                
+                // 難易度を上げる
+                if (score % 5 === 0 && sushiSpeed < 4) {
+                    sushiSpeed += 0.3;
+                }
+            } else {
+                // 間違い
+                sushi.classList.add('wrong-flash');
+                mistakes++;
+                document.getElementById('mistakes').textContent = mistakes;
+                
+                setTimeout(() => {
+                    if (sushi) {
+                        sushi.classList.remove('wrong-flash');
+                    }
+                }, 300);
+                
+                if (mistakes >= 3) {
+                    endGame();
+                }
+            }
+        }
+        
+        function updateTimer() {
+            document.getElementById('timer').textContent = timeLeft;
+            timeLeft--;
+            
+            if (timeLeft < 0) {
+                endGame();
+            }
+        }
+        
+        function getRank(score) {
+            if (score >= 40) return { rank: '達人', color: '#FFD700' };
+            if (score >= 30) return { rank: '達人手前', color: '#FF6347' };
+            if (score >= 15) return { rank: '熟練者', color: '#32CD32' };
+            if (score >= 10) return { rank: '修行者', color: '#87CEEB' };
+            return { rank: '見習い', color: '#DDA0DD' };
+        }
+        
+        function startGame() {
+            document.getElementById('startScreen').style.display = 'none';
+            
+            // 前回のゲームのタイマーがあればクリア
+            if (gameTimer) {
+                clearInterval(gameTimer);
+            }
+            if (sushiGenerationTimer) {
+                clearInterval(sushiGenerationTimer);
+            }
+            
+            gameActive = true;
+            score = 0;
+            mistakes = 0;
+            timeLeft = 60;
+            sushiSpeed = 2;
+            sushiList = [];
+            
+            document.getElementById('score').textContent = score;
+            document.getElementById('mistakes').textContent = mistakes;
+            document.getElementById('timer').textContent = timeLeft;
+            
+            // 既存の寿司を削除
+            const conveyor = document.getElementById('conveyor');
+            conveyor.innerHTML = '';
+            
+            generateNewOrder();
+            
+            // コンベアレーン全体にタッチイベントを追加
+            conveyor.addEventListener('click', handleConveyorClick);
+            conveyor.addEventListener('touchstart', handleConveyorTouch, { passive: false });
+            
+            gameTimer = setInterval(updateTimer, 1000);
+            
+            // 寿司を定期的に生成（間隔を短くして密に）
+            sushiGenerationTimer = setInterval(() => {
+                if (gameActive) createSushi();
+            }, 300);
+        }
+        
+        function endGame() {
+            gameActive = false;
+            
+            // 全てのタイマーをクリア
+            if (gameTimer) {
+                clearInterval(gameTimer);
+            }
+            if (sushiGenerationTimer) {
+                clearInterval(sushiGenerationTimer);
+            }
+            
+            // イベントリスナーを削除
+            const conveyor = document.getElementById('conveyor');
+            conveyor.removeEventListener('click', handleConveyorClick);
+            conveyor.removeEventListener('touchstart', handleConveyorTouch);
+            
+            const rankInfo = getRank(score);
+            document.getElementById('finalScore').textContent = score;
+            const rankElement = document.getElementById('rank');
+            rankElement.textContent = rankInfo.rank;
+            rankElement.style.color = rankInfo.color;
+            
+            document.getElementById('gameOverScreen').style.display = 'flex';
+        }
+        
+        function restartGame() {
+            document.getElementById('gameOverScreen').style.display = 'none';
+            
+            // 既存の寿司を削除
+            const conveyor = document.getElementById('conveyor');
+            conveyor.innerHTML = '';
+            sushiList = [];
+            
+            startGame();
+        }
+    </script>
+</body>
+</html>

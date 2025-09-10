@@ -1,0 +1,25 @@
+# _headers ファイル（Netlify用）
+# 回転寿司ゲーム用セキュリティヘッダー
+# このファイルをプロジェクトのルートディレクトリに配置
+
+/*
+  X-XSS-Protection: 1; mode=block
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: SAMEORIGIN
+  Referrer-Policy: strict-origin-when-cross-origin
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self';
+  Permissions-Policy: geolocation=(), microphone=(), camera=(), gyroscope=(), magnetometer=(), payment=()
+
+# HTMLファイルのキャッシュ設定
+/*.html
+  Cache-Control: public, max-age=3600
+
+# 画像ファイルのキャッシュ設定
+/*.jpg
+  Cache-Control: public, max-age=2592000
+/*.jpeg
+  Cache-Control: public, max-age=2592000
+/*.png
+  Cache-Control: public, max-age=2592000
+/*.gif
+  Cache-Control: public, max-age=2592000
