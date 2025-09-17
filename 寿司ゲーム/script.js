@@ -1,5 +1,4 @@
-    <script>
-        const sushiTypes = [
+   const sushiTypes = [
             { name: 'maguro', image: 'maguro.jpg' },
             { name: 'ebi', image: 'ebi.jpg' },
             { name: 'sake', image: 'sake.jpg' },
@@ -249,4 +248,3 @@
             
             startGame();
         }
-    </script>
