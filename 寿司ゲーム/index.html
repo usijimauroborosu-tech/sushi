@@ -57,14 +57,15 @@
         
        /* 注文表示の画像を円形にするスタイルを追加 */
         #currentOrder img {
-          width: 50px;
-          height: 50px;
+          width: 60px;
+          height: 60px;
           object-fit: cover;
           border-radius: 50%;
           border: 2px solid #FFFFFF;
           box-shadow: 0 2px 4px rgba(0,0,0,0.3);
           display: block;
           margin: 0 auto;
+          flex-shrink: 0; /* サイズを固定 */
          }
 
         #gameInfo {
