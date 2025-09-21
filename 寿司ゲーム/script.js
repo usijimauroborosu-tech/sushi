@@ -18,6 +18,19 @@ const sushiTypes = [
         let sushiGenerationTimer; // 寿司生成用のタイマーを追加
         let sushiSpeed = 4;
         let sushiList = [];
+        let preloadedImages = {}; // プリロード済み画像を保存
+        
+        // 画像をプリロードする関数
+        function preloadImages() {
+            sushiTypes.forEach(sushi => {
+                const img = new Image();
+                img.src = sushi.image;
+                preloadedImages[sushi.name] = img;
+            });
+        }
+        
+        // ページ読み込み時に画像をプリロード
+        window.addEventListener('load', preloadImages);
         
         function getRandomSushi() {
             return sushiTypes[Math.floor(Math.random() * sushiTypes.length)];
@@ -26,9 +39,13 @@ const sushiTypes = [
         function generateNewOrder() {
             const randomSushi = getRandomSushi();
             currentOrder = randomSushi.name;
-            // 注文表示用の画像を作成
+            // 注文表示用の画像を作成（プリロード済み画像を使用）
             const orderImg = document.createElement('img');
-            orderImg.src = randomSushi.image;
+            if (preloadedImages[randomSushi.name]) {
+                orderImg.src = preloadedImages[randomSushi.name].src;
+            } else {
+                orderImg.src = randomSushi.image;
+            }
             orderImg.style.width = '100%';
             orderImg.style.height = 'auto';
             orderImg.style.maxHeight = '60px';
@@ -46,9 +63,13 @@ const sushiTypes = [
             sushi.className = 'sushi';
             const sushiType = getRandomSushi();
             
-            // 寿司画像を作成
+            // 寿司画像を作成（プリロード済み画像を使用）
             const sushiImg = document.createElement('img');
-            sushiImg.src = sushiType.image;
+            if (preloadedImages[sushiType.name]) {
+                sushiImg.src = preloadedImages[sushiType.name].src;
+            } else {
+                sushiImg.src = sushiType.image;
+            }
             sushiImg.alt = sushiType.name;
             // 寿司のサイズを1.3倍に設定
             sushiImg.style.width = '65px'; // 元の50pxの1.3倍
