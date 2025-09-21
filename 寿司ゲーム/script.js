@@ -1,4 +1,4 @@
-        const sushiTypes = [
+const sushiTypes = [
             { name: 'maguro', image: 'maguro.jpg' },
             { name: 'ebi', image: 'ebi.jpg' },
             { name: 'sake', image: 'sake.jpg' },
@@ -52,9 +52,16 @@
             const sushiImg = document.createElement('img');
             sushiImg.src = sushiType.image;
             sushiImg.alt = sushiType.name;
+            // 寿司のサイズを1.3倍に設定
+            sushiImg.style.width = '65px'; // 元の50pxの1.3倍
+            sushiImg.style.height = '65px';
+            sushiImg.style.objectFit = 'contain';
             sushi.appendChild(sushiImg);
             
-            sushi.style.right = '-80px';
+            sushi.style.right = '-100px';
+            // 寿司のコンテナサイズも大きくする
+            sushi.style.width = '70px';
+            sushi.style.height = '70px';
             sushi.dataset.type = sushiType.name;
             sushi.dataset.clicked = 'false';
             
@@ -68,7 +75,7 @@
         }
         
         function moveSushi(sushi) {
-            let position = -80;
+            let position = -100;
             const moveInterval = setInterval(() => {
                 if (!gameActive) {
                     clearInterval(moveInterval);
@@ -213,10 +220,10 @@
             
             gameTimer = setInterval(updateTimer, 1000);
             
-            // 寿司を定期的に生成（間隔を短くして密に）
+            // 寿司を定期的に生成（重なりを防ぐため間隔を調整）
             sushiGenerationTimer = setInterval(() => {
                 if (gameActive) createSushi();
-            }, 300);
+            }, 500);
         }
         
         function endGame() {
