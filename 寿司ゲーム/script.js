@@ -16,7 +16,7 @@ const sushiTypes = [
         let timeLeft = 60;
         let gameTimer;
         let sushiGenerationTimer; // 寿司生成用のタイマーを追加
-        let sushiSpeed = 2;
+        let sushiSpeed = 4;
         let sushiList = [];
         
         function getRandomSushi() {
@@ -146,8 +146,8 @@ const sushiTypes = [
                 }, 300);
                 
                 // 難易度を上げる
-                if (score % 5 === 0 && sushiSpeed < 4) {
-                    sushiSpeed += 0.3;
+                if (score % 5 === 0 && sushiSpeed < 8) {
+                    sushiSpeed += 0.5;
                 }
             } else {
                 // 間違い
@@ -199,7 +199,7 @@ const sushiTypes = [
             score = 0;
             mistakes = 0;
             timeLeft = 60;
-            sushiSpeed = 2;
+            sushiSpeed = 4;
             sushiList = [];
             
             document.getElementById('score').textContent = score;
@@ -218,10 +218,10 @@ const sushiTypes = [
             
             gameTimer = setInterval(updateTimer, 1000);
             
-            // 寿司を定期的に生成（重なりを防ぐため間隔を調整）
+            // 寿司を定期的に生成（スピードアップに合わせて間隔を調整）
             sushiGenerationTimer = setInterval(() => {
                 if (gameActive) createSushi();
-            }, 500);
+            }, 300);
         }
         
         function endGame() {
