@@ -1,9 +1,15 @@
-   const sushiTypes = [
+        const sushiTypes = [
             { name: 'maguro', image: 'maguro.jpg' },
             { name: 'ebi', image: 'ebi.jpg' },
             { name: 'sake', image: 'sake.jpg' },
             { name: 'iwashi', image: 'iwashi.jpg' },
-            { name: 'ikura', image: 'ikura.jpg' }
+            { name: 'ikura', image: 'ikura.jpg' },
+            { name: 'tamago', image: 'tamago.jpg' },
+            { name: 'ika', image: 'ika.jpg' }, 
+            { name: 'tekkamaki', image: 'tekkamaki.jpg' }, 
+            { name: 'anago', image: 'anago.jpg' }, 
+            { name: 'maguro3', image: 'maguro3.jpg' }, 
+            { name: 'inari', image: 'inari.jpg' },      
         ];
         let gameActive = false;
         let currentOrder = '';
