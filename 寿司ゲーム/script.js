@@ -25,6 +25,7 @@ const sushiTypes = [
         // シャッフルバッグ用の変数
         let sushiBag = [];
         let bagIndex = 0;
+        let nextSushiBag = []; // 次のバッグを事前準備
         
         // 画像をプリロードする関数
         function preloadImages() {
@@ -38,27 +39,49 @@ const sushiTypes = [
         // ページ読み込み時に画像をプリロード
         window.addEventListener('load', preloadImages);
         
-        // 配列をシャッフルする関数（Fisher-Yates shuffle）
-        function shuffleArray(array) {
-            const shuffled = [...array];
-            for (let i = shuffled.length - 1; i > 0; i--) {
+        // 軽量なシャッフル関数（元配列を直接変更）
+        function shuffleArrayInPlace(array) {
+            for (let i = array.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
-                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+                [array[i], array[j]] = [array[j], array[i]];
             }
-            return shuffled;
+            return array;
         }
         
-        // 寿司バッグを初期化・再シャッフルする関数
+        // 寿司バッグを初期化する関数（最適化版）
         function initializeSushiBag() {
-            sushiBag = shuffleArray(sushiTypes);
+            sushiBag = [...sushiTypes];
+            shuffleArrayInPlace(sushiBag);
             bagIndex = 0;
+            
+            // 次のバッグも事前準備（非同期で）
+            prepareNextBag();
         }
         
-        // シャッフルバッグ方式で寿司を取得
+        // 次のバッグを非同期で事前準備
+        function prepareNextBag() {
+            setTimeout(() => {
+                nextSushiBag = [...sushiTypes];
+                shuffleArrayInPlace(nextSushiBag);
+            }, 0);
+        }
+        
+        // シャッフルバッグ方式で寿司を取得（最適化版）
         function getRandomSushi() {
-            // バッグが空になったら再シャッフル
+            // バッグが空になったら事前準備済みのバッグを使用
             if (bagIndex >= sushiBag.length) {
-                initializeSushiBag();
+                // 事前準備済みのバッグがあればそれを使用、なければ即座に作成
+                if (nextSushiBag.length > 0) {
+                    sushiBag = nextSushiBag;
+                    nextSushiBag = [];
+                } else {
+                    sushiBag = [...sushiTypes];
+                    shuffleArrayInPlace(sushiBag);
+                }
+                bagIndex = 0;
+                
+                // 次のバッグを非同期で準備
+                prepareNextBag();
             }
             
             const sushi = sushiBag[bagIndex];
@@ -228,7 +251,7 @@ const sushiTypes = [
         }
         
         function getRank(score) {
-            if (score >= 25) return { rank: '達人', color: '#FFD700' };
+            if (score >= 20) return { rank: '達人', color: '#FFD700' };
             if (score >= 15) return { rank: '達人手前', color: '#FF6347' };
             if (score >= 10) return { rank: '熟練者', color: '#32CD32' };
             if (score >= 5) return { rank: '修行者', color: '#87CEEB' };
@@ -313,3 +336,4 @@ const sushiTypes = [
             
             startGame();
         }
+
