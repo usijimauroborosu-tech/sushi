@@ -8,6 +8,8 @@ const sushiTypes = [
             { name: 'tekkamaki', image: 'tekkamaki.jpg' }, 
             { name: 'anago', image: 'anago.jpg' }, 
             { name: 'maguro3', image: 'maguro3.jpg' }, 
+            { name: 'inari', image: 'inari.jpg' }, 
+            { name: 'tamago', image: 'tamago.jpg' }, 
         ];
         let gameActive = false;
         let currentOrder = '';
@@ -198,10 +200,10 @@ const sushiTypes = [
         }
         
         function getRank(score) {
-            if (score >= 40) return { rank: '達人', color: '#FFD700' };
-            if (score >= 30) return { rank: '達人手前', color: '#FF6347' };
-            if (score >= 15) return { rank: '熟練者', color: '#32CD32' };
-            if (score >= 10) return { rank: '修行者', color: '#87CEEB' };
+            if (score >= 25) return { rank: '達人', color: '#FFD700' };
+            if (score >= 15) return { rank: '達人手前', color: '#FF6347' };
+            if (score >= 10) return { rank: '熟練者', color: '#32CD32' };
+            if (score >= 5) return { rank: '修行者', color: '#87CEEB' };
             return { rank: '見習い', color: '#DDA0DD' };
         }
         
@@ -242,7 +244,7 @@ const sushiTypes = [
             // 寿司を定期的に生成（スピードアップに合わせて間隔を調整）
             sushiGenerationTimer = setInterval(() => {
                 if (gameActive) createSushi();
-            }, 300);
+            }, 250);
         }
         
         function endGame() {
