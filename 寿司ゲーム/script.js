@@ -22,6 +22,10 @@ const sushiTypes = [
         let sushiList = [];
         let preloadedImages = {}; // プリロード済み画像を保存
         
+        // シャッフルバッグ用の変数
+        let sushiBag = [];
+        let bagIndex = 0;
+        
         // 画像をプリロードする関数
         function preloadImages() {
             sushiTypes.forEach(sushi => {
@@ -34,8 +38,32 @@ const sushiTypes = [
         // ページ読み込み時に画像をプリロード
         window.addEventListener('load', preloadImages);
         
+        // 配列をシャッフルする関数（Fisher-Yates shuffle）
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+        
+        // 寿司バッグを初期化・再シャッフルする関数
+        function initializeSushiBag() {
+            sushiBag = shuffleArray(sushiTypes);
+            bagIndex = 0;
+        }
+        
+        // シャッフルバッグ方式で寿司を取得
         function getRandomSushi() {
-            return sushiTypes[Math.floor(Math.random() * sushiTypes.length)];
+            // バッグが空になったら再シャッフル
+            if (bagIndex >= sushiBag.length) {
+                initializeSushiBag();
+            }
+            
+            const sushi = sushiBag[bagIndex];
+            bagIndex++;
+            return sushi;
         }
         
         function generateNewOrder() {
@@ -224,6 +252,9 @@ const sushiTypes = [
             timeLeft = 60;
             sushiSpeed = 4;
             sushiList = [];
+            
+            // シャッフルバッグを初期化
+            initializeSushiBag();
             
             document.getElementById('score').textContent = score;
             document.getElementById('mistakes').textContent = mistakes;
