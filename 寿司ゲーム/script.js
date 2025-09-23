@@ -21,6 +21,7 @@ const sushiTypes = [
         let sushiSpeed = 4;
         let sushiList = [];
         let preloadedImages = {}; // プリロード済み画像を保存
+        let generationInterval = 400; // 初期生成間隔（ミリ秒）
         
         // シャッフルバッグ用の変数
         let sushiBag = [];
@@ -112,6 +113,11 @@ const sushiTypes = [
         function createSushi() {
             if (!gameActive) return;
             
+            // DOM要素が多すぎる場合は生成をスキップ
+            if (sushiList.length > 8) {
+                return;
+            }
+            
             const sushi = document.createElement('div');
             sushi.className = 'sushi';
             const sushiType = getRandomSushi();
@@ -159,15 +165,20 @@ const sushiTypes = [
                 
                 if (position > window.innerWidth + 100) {
                     clearInterval(moveInterval);
-                    if (sushi && sushi.parentNode) {
-                        sushi.parentNode.removeChild(sushi);
-                        const index = sushiList.indexOf(sushi);
-                        if (index > -1) {
-                            sushiList.splice(index, 1);
-                        }
-                    }
+                    removeSushiFromList(sushi);
                 }
             }, 16);
+        }
+        
+        // 寿司をリストから削除する関数（最適化）
+        function removeSushiFromList(sushi) {
+            if (sushi && sushi.parentNode) {
+                sushi.parentNode.removeChild(sushi);
+                const index = sushiList.indexOf(sushi);
+                if (index > -1) {
+                    sushiList.splice(index, 1);
+                }
+            }
         }
         
         function handleConveyorClick(e) {
@@ -210,18 +221,17 @@ const sushiTypes = [
                 
                 // 寿司を削除
                 setTimeout(() => {
-                    if (sushi && sushi.parentNode) {
-                        sushi.parentNode.removeChild(sushi);
-                        const index = sushiList.indexOf(sushi);
-                        if (index > -1) {
-                            sushiList.splice(index, 1);
-                        }
-                    }
+                    removeSushiFromList(sushi);
                 }, 300);
                 
-                // 難易度を上げる
+                // 難易度を上げる（生成間隔も調整）
                 if (score % 5 === 0 && sushiSpeed < 8) {
                     sushiSpeed += 0.5;
+                    // 速度上昇時は生成間隔を少し延ばして負荷軽減
+                    if (generationInterval > 300) {
+                        generationInterval -= 20;
+                        restartSushiGeneration();
+                    }
                 }
             } else {
                 // 間違い
@@ -251,11 +261,21 @@ const sushiTypes = [
         }
         
         function getRank(score) {
-            if (score >= 20) return { rank: '達人', color: '#FFD700' };
+            if (score >= 25) return { rank: '達人', color: '#FFD700' };
             if (score >= 15) return { rank: '達人手前', color: '#FF6347' };
             if (score >= 10) return { rank: '熟練者', color: '#32CD32' };
             if (score >= 5) return { rank: '修行者', color: '#87CEEB' };
             return { rank: '見習い', color: '#DDA0DD' };
+        }
+        
+        // 寿司生成タイマーを再開する関数
+        function restartSushiGeneration() {
+            if (sushiGenerationTimer) {
+                clearInterval(sushiGenerationTimer);
+            }
+            sushiGenerationTimer = setInterval(() => {
+                if (gameActive) createSushi();
+            }, generationInterval);
         }
         
         function startGame() {
@@ -275,6 +295,7 @@ const sushiTypes = [
             timeLeft = 60;
             sushiSpeed = 4;
             sushiList = [];
+            generationInterval = 400; // 生成間隔をリセット
             
             // シャッフルバッグを初期化
             initializeSushiBag();
@@ -295,10 +316,8 @@ const sushiTypes = [
             
             gameTimer = setInterval(updateTimer, 1000);
             
-            // 寿司を定期的に生成（スピードアップに合わせて間隔を調整）
-            sushiGenerationTimer = setInterval(() => {
-                if (gameActive) createSushi();
-            }, 250);
+            // 寿司を定期的に生成（最適化された間隔で）
+            restartSushiGeneration();
         }
         
         function endGame() {
@@ -336,4 +355,3 @@ const sushiTypes = [
             
             startGame();
         }
-
