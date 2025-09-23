@@ -114,7 +114,7 @@ const sushiTypes = [
             if (!gameActive) return;
             
             // DOM要素が多すぎる場合は生成をスキップ
-            if (sushiList.length > 8) {
+            if (sushiList.length > 11) {
                 return;
             }
             
@@ -355,3 +355,4 @@ const sushiTypes = [
             
             startGame();
         }
+
