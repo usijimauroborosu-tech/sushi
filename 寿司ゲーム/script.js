@@ -113,18 +113,8 @@ const sushiTypes = [
         function createSushi() {
             if (!gameActive) return;
             
-            // 画面上の寿司の位置をチェックして適切な間隔を保つ
-            const lastSushi = sushiList[sushiList.length - 1];
-            if (lastSushi) {
-                const lastSushiPosition = parseInt(lastSushi.style.right) || -100;
-                // 最後の寿司が十分進んでいない場合は生成をスキップ
-                if (lastSushiPosition < 150) {
-                    return;
-                }
-            }
-            
-            // DOM要素が多すぎる場合のみ制限（緩和）
-            if (sushiList.length > 12) {
+            // DOM要素が多すぎる場合は生成をスキップ
+            if (sushiList.length > 8) {
                 return;
             }
             
