@@ -113,8 +113,18 @@ const sushiTypes = [
         function createSushi() {
             if (!gameActive) return;
             
-            // DOM要素が多すぎる場合は生成をスキップ
-            if (sushiList.length > 8) {
+            // 画面上の寿司の位置をチェックして適切な間隔を保つ
+            const lastSushi = sushiList[sushiList.length - 1];
+            if (lastSushi) {
+                const lastSushiPosition = parseInt(lastSushi.style.right) || -100;
+                // 最後の寿司が十分進んでいない場合は生成をスキップ
+                if (lastSushiPosition < 150) {
+                    return;
+                }
+            }
+            
+            // DOM要素が多すぎる場合のみ制限（緩和）
+            if (sushiList.length > 12) {
                 return;
             }
             
@@ -261,7 +271,7 @@ const sushiTypes = [
         }
         
         function getRank(score) {
-            if (score >= 20) return { rank: '達人', color: '#FFD700' };
+            if (score >= 25) return { rank: '達人', color: '#FFD700' };
             if (score >= 15) return { rank: '達人手前', color: '#FF6347' };
             if (score >= 10) return { rank: '熟練者', color: '#32CD32' };
             if (score >= 5) return { rank: '修行者', color: '#87CEEB' };
