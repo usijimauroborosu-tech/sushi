@@ -261,7 +261,7 @@ const sushiTypes = [
         }
         
         function getRank(score) {
-            if (score >= 25) return { rank: '達人', color: '#FFD700' };
+            if (score >= 20) return { rank: '達人', color: '#FFD700' };
             if (score >= 15) return { rank: '達人手前', color: '#FF6347' };
             if (score >= 10) return { rank: '熟練者', color: '#32CD32' };
             if (score >= 5) return { rank: '修行者', color: '#87CEEB' };
@@ -295,7 +295,7 @@ const sushiTypes = [
             timeLeft = 60;
             sushiSpeed = 4;
             sushiList = [];
-            generationInterval = 250; // 生成間隔をリセット
+            generationInterval = 400; // 生成間隔をリセット
             
             // シャッフルバッグを初期化
             initializeSushiBag();
